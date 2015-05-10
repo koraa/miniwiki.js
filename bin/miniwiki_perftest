@@ -1,0 +1,73 @@
+#! /usr/bin/env coffee
+http = require 'http'
+
+get_delay = 0
+post_delay = 200
+log_delay = 3000
+host = '127.0.0.1'
+port = 8080
+articles = [
+  "cheerfulness"
+]
+
+contents = [
+  "clips"
+  "helvetica"
+  "pyracanth"
+  "gam"
+  "publicizes"
+  "straws"
+  "naiveness"
+  "blackjack"
+  "citron"
+  "commissary"
+  "faa"
+  "shamrock"
+  "rash"
+  "veterinary"
+]
+
+t0 = new Date().getTime()
+get_count = 0
+get_ret = 0
+post_count = 0
+post_ret = 0
+
+delay = (a,b) -> setTimeout b, a
+
+rndArticle = -> articles[0]
+
+tget = ->
+  get_count++
+  req = http.get "http://#{host}:#{port}/#{rndArticle()}", (res) ->
+    delay get_delay, tget
+    get_ret++
+  req.on 'error', -> delay get_delay, tget
+
+tpost = ->
+  post_count++
+  opts =
+    host: host
+    port: port
+    method: "POST"
+    path: "/#{rndArticle()}"
+  req = http.request opts, (res) ->
+    post_ret++
+    delay post_delay, tpost
+  req.on 'error', -> delay post_delay, tpost
+  req.write "#{post_count}"
+  req.end()
+
+log = ->
+  delay log_delay, log
+
+  t1 = new Date().getTime()
+  td = (t1-t0)/1000
+  console.log "\nTIME: #{td}s\n" +
+    "GETS: #{get_ret}/#{get_count} – #{get_ret/td}/#{get_count/td}\n" +
+    "POSTS: #{post_ret}/#{post_count} – #{post_ret/td}/#{post_count/td}\n"
+
+for i in [0..100]
+  do tget
+do tpost
+delay log_delay, log
