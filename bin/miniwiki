@@ -7,10 +7,11 @@ var path = require('path');
 var fs   = require('fs');
 var lib  = path.join(path.dirname(fs.realpathSync(__filename)), '../lib');
 
-var miniwiki = require(lib + '/miniwiki');
+var cluster = require(lib + '/cluster');
 
 var cfg = {};
 cfg.prefix  = process.argv[2] || "/tmp/miniwiki";
 cfg.port    = Number(process.argv[3]) || 8080;
+cfg.numcpus = process.argv[4] || os.cpus().length;
 
-miniwiki(cfg);
+cluster(cfg);
