@@ -1,0 +1,13 @@
+{
+  "name": "miniwiki",
+  "version": "0.0.1",
+  "description": "A miniature wiki",
+  "keywords": [ "wiki" ],
+  "author": "Karolin Varner <karo@cupdev.net>",
+  "license": "BSD",
+  "dependencies": {
+    "coffee-script": "^1.9.2",
+    "express": "^4.12.3"
+  }
+}
+
