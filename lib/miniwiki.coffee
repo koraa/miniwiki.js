@@ -3,14 +3,23 @@ fs = require 'fs'
 
 Config = {}
 
+# Fast doubling algorithm
+# http://www.nayuki.io/page/fast-fibonacci-algorithms
+_fib = (n) ->
+  return [0,1] if n == 0
+  [a, b] = _fib n // 2
+  c = a * (b*2 - a)
+  d = a * a + b * b
+  if n % 2 == 0
+    [c, d]
+  else
+    [d, c + d]
+
 fibonacci = (i=34) ->
   if i < 0
     throw Error "Can not compute the #{i}nth number from " +
       "the fibonacci sequence, because it is <0."
-  else if i < 2
-    i
-  else
-    fibonacci(i-1) + fibonacci(i-2)
+  _fib(i)[0]
 
 class Wikipage
   constructor: (@name) ->
