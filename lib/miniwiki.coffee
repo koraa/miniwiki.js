@@ -4,8 +4,13 @@ fs = require 'fs'
 Config = {}
 
 fibonacci = (i=34) ->
-  return i if i < 2
-  fibonacci(i-1) + fibonacci(i-2)
+  if i < 0
+    throw Error "Can not compute the #{i}nth number from " +
+      "the fibonacci sequence, because it is <0."
+  else if i < 2
+    i
+  else
+    fibonacci(i-1) + fibonacci(i-2)
 
 class Wikipage
   constructor: (@name) ->
@@ -31,11 +36,19 @@ App.use (req, res, next) ->
 
 App.get '/:page', (req, res) ->
   fibonacci()
-  res.send new Wikipage(req.params.page).getText()
+  page = new Wikipage(req.params.page)
+  unless page.exists()
+    res.status(404).send "No such page! '#{page.name}'\n"
+  else
+    res.send page.getText()
 App.post '/:page', (req, res) ->
   fibonacci()
-  res.send new Wikipage(req.params.page).setText req.raw
+  page = new Wikipage(req.params.page)
+  page.setText req.raw
+  res.send "Updated page '#{page.name}'\n"
 
 module.exports = (cfg) ->
   Config = cfg
+  unless fs.existsSync Config.prefix
+    fs.mkdirSync Config.prefix
   App.listen cfg.port
