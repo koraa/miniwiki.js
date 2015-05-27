@@ -23,6 +23,8 @@ fibonacci = (i=34) ->
 
 class Wikipage
   constructor: (@name) ->
+    unless @name.match /^[a-zA-Z-_]*$/
+      throw Error "The wikipage name may only contain word characters"
     @path = "#{Config.prefix}/#{@name}"
   exists: ->
     fs.existsSync @path
